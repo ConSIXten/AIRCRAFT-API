@@ -14,9 +14,6 @@ if (isset($_GET['id'])) {
         $aircraft_id = (int)$path_parts[2];
     }
 }
-
-if ($_SERVER["REQUEST_METHOD"] === "GET") {
-	
 	if ($aircraft_id) {
 		$sql = "
 			SELECT 
@@ -56,19 +53,22 @@ if ($_SERVER["REQUEST_METHOD"] === "GET") {
 		$stmt->execute();
 		$aircrafts = $stmt->fetchAll(PDO::FETCH_ASSOC);
 		
-		$result = [];
+		$aircraft_list = [];
 		foreach ($aircrafts as $aircraft) {
-			$result[] = [
+			$aircraft_list[] = [
 				'id' => (int)$aircraft['id'],
 				'model' => $aircraft['Model'],
 				'link' => "http://localhost:8888/aircraft-api/aircrafts/?id=" . $aircraft['id']
 			];
 		}
 		
+		$result = [
+			'results' => $aircraft_list
+		];
+		
 		header("Content-Type: application/json; charset=utf-8");
 		echo json_encode($result, JSON_PRETTY_PRINT);
 	}
-}
 
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
 	$model = $_POST["model"];
